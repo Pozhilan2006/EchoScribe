@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Transcription</title>
+    <style>
+        body {
+            width: 350px;
+            min-height: 400px;
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #4285f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .status-label {
+            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .status-value {
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .status-connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-unknown {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .controls {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 16px;
+        }
+        
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .control-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #4285f4;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #4285f4;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3367d6;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .actions .btn {
+            flex: 1;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+        
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 1a7 7 0 0 1 7 7v3a7 7 0 0 1-14 0V8a7 7 0 0 1 7-7Z" fill="currentColor"/>
+                <path d="M12 17v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+                <path d="M8 20h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            </svg>
+            Meeting Transcription
+        </h1>
+    </div>
+    
+    <div class="status-card">
+        <div class="status-item">
+            <span class="status-label">Server Status:</span>
+            <span id="serverStatus" class="status-value status-unknown">Checking...</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Google Meet:</span>
+            <span id="meetStatus" class="status-value status-unknown">Checking...</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Current Speaker:</span>
+            <span id="currentSpeaker" class="status-value">Unknown</span>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label class="control-label">Auto-detect transcription</label>
+            <div class="toggle-switch">
+                <label class="switch">
+                    <input type="checkbox" id="autoDetectToggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="autoDetectStatus">Disabled</span>
+            </div>
+            <div class="help-text">
+                Automatically detect and send speaker names and captions from Google Meet
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" for="serverUrl">Server URL:</label>
+            <div class="input-group">
+                <input type="url" id="serverUrl" placeholder="http://localhost:5000" value="http://localhost:5000">
+                <button class="btn btn-secondary btn-sm" id="testServerBtn">Test</button>
+            </div>
+            <div class="help-text">
+                URL of your transcription server
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Test Transcription:</label>
+            <div class="input-group">
+                <input type="text" id="testSpeaker" placeholder="Speaker name" value="Test Speaker">
+            </div>
+            <div class="input-group" style="margin-top: 8px;">
+                <input type="text" id="testMessage" placeholder="Test message" value="Hello, this is a test message">
+                <button class="btn btn-primary btn-sm" id="sendTestBtn">Send</button>
+            </div>
+            <div class="help-text">
+                Send a test message to verify the connection
+            </div>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <button class="btn btn-primary" id="openAppBtn">Open App</button>
+        <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
+    </div>
+    
+    <div id="messageArea"></div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
