@@ -3,7 +3,7 @@ Flask-SocketIO==5.3.6
 python-socketio==5.11.2
 python-engineio==4.9.1
 transformers==4.41.2
-torch==2.3.0
+torch==2.7.1
 psycopg2-binary==2.9.10
 Flask-SQLAlchemy==3.1.1
 gunicorn==23.0.0
